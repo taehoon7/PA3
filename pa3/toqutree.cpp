@@ -32,7 +32,7 @@ toqutree & toqutree::operator=(const toqutree & rhs){
 }
 
 toqutree::toqutree(PNG & imIn, int k){ 
-
+	buildTree(&imIn, k);
 /* This constructor grabs the 2^k x 2^k sub-image centered */
 /* in imIn and uses it to build a quadtree. It may assume  */
 /* that imIn is large enough to contain an image of that size. */
@@ -41,7 +41,29 @@ toqutree::toqutree(PNG & imIn, int k){
 }
 
 int toqutree::size() {
+	int count = 0;
+	if (root != NULL) {
+		count = getsubtreeSize(root);
+	}
+	return count;
 /* your code here */
+}
+
+int toqutree::getsubtreeSize(Node* node) {
+	int count = 1;
+	if (node->NW != NULL) {
+		count += getsubtreeSize(node->NW);
+	}
+	if (node->NE != NULL) {
+		count += getsubtreeSize(node->NE);
+	}
+	if (node->SE != NULL) {
+		count += getsubtreeSize(node->SE);
+	}
+	if (node->SW != NULL) {
+		count += getsubtreeSize(node->SW);
+	}
+	return count;
 }
 
 
@@ -72,7 +94,7 @@ PNG toqutree::render(){
 /* oops, i left the implementation of this one in the file! */
 void toqutree::prune(double tol){
 
-	prune(root,tol);
+	//prune(root,tol);
 
 }
 
