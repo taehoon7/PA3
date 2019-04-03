@@ -229,29 +229,24 @@ void toqutree::clear(Node * & curr){
 /* called by assignment operator and copy constructor */
 toqutree::Node * toqutree::copy(const Node * other) {
 	if(other == NULL){
-		other = NULL;
+		return NULL;
 	}
 	else{
-		copy_help(this -> root, other);
+		Node * dest = new Node(other -> center, other -> dimension, other -> avg);
+		copy_help(dest, other);
 	}
 
 /* your code here */
 }
 
 toqutree::Node * toqutree::copy_help(Node * & dest, const Node * other){
-	
-	if(other == NULL){
-		dest = NULL;
-	}
-	else{
-		Node * dest = new Node;
-		dest -> center = other -> center;
-		dest -> avg = other -> avg;
-		dest -> dimension = other -> dimension;
-		copy_help(dest -> NW, other -> NW);
-		copy_help(dest -> NE, other -> NE);
-		copy_help(dest -> SE, other -> SE);
-		copy_help(dest -> SW, other -> SW);
+
+		dest -> NW = copy(other -> NW);
+		dest -> NE = copy(other -> NE);
+		dest -> SE = copy(other -> SE);
+		dest -> SW = copy(other -> SW);
+
+		return dest;
 	}
 
 		// if(other == NULL){
@@ -263,7 +258,6 @@ toqutree::Node * toqutree::copy_help(Node * & dest, const Node * other){
 	// 	node->NW = copy(other->NW);
 	// 	node->SW = copy(other->SW);
 	// 	node->SE = copy(other->SE);
-}
 double toqutree::getaverageEntropy(PNG *im, int k, pair<int, int> ctr) {
 	stats s(*im);
 	int length = pow(2, k);
