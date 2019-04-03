@@ -118,7 +118,7 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 
 		//until leaf pixel is reached, do recursion
 		//create 4 images from original image
-		PNG *SE_img = new PNG(length, length);
+		/*PNG *SE_img = new PNG(length, length);
 		PNG *SW_img = new PNG(length, length);
 		PNG *NE_img = new PNG(length, length);
 		PNG *NW_img = new PNG(length, length);
@@ -131,7 +131,17 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 		delete SE_img;
 		delete SW_img;
 		delete NE_img;
-		delete NW_img;
+		delete NW_img;*/
+		PNG SE_img = PNG(length, length);
+		PNG SW_img = PNG(length, length);
+		PNG NE_img = PNG(length, length);
+		PNG NW_img = PNG(length, length);
+		createPic(&SE_img, &SW_img, &NE_img, &NW_img, im, ctr, k - 1);
+		//recursion
+		node->SE = buildTree(&SE_img, k - 1);
+		node->SW = buildTree(&SW_img, k - 1);
+		node->NE = buildTree(&NE_img, k - 1);
+		node->NW = buildTree(&NW_img, k - 1);
 	}
 	else {
 		stats s(*im);
@@ -160,16 +170,59 @@ PNG toqutree::render(){
 // My algorithm for this problem included a helper function
 // that was analogous to Find in a BST, but it navigated the 
 // quadtree, instead.
-
 /* your code here */
 
 }
+void toqutree::render_help(){
 
+}
 /* oops, i left the implementation of this one in the file! */
 void toqutree::prune(double tol){
+	if(root != NULL){
+		prune_helper(root, tol);
+	}
+}
 
-	//prune(root,tol);
+void toqutree::prune_helper(Node *& sroot, double tol){
+	if(sroot != NULL){
+		if((yesprune(sroot -> NE, sroot, tol)) && (yesprune(sroot -> NW, sroot, tol))
+		&& (yesprune(sroot -> SW, sroot, tol)) && (yesprune(sroot -> SE, sroot, tol))){
+			
+			clear(sroot -> NE);
+			clear(sroot -> NW);
+			clear(sroot -> SW);
+			clear(sroot -> SE);
 
+		}
+		prune_helper(sroot -> NE, tol);
+		prune_helper(sroot -> NW, tol);
+		prune_helper(sroot -> SW, tol);
+		prune_helper(sroot -> SE, tol);
+	}
+}
+
+bool toqutree::yesprune(Node *& sroot, Node *& parent, double tol){
+	//if leaves are already pruned, then stop
+	if(sroot == NULL){
+		return false;
+	}
+
+	//if one of the child is null, then this node is leaf
+	if(sroot -> NE == NULL){
+		HSLAPixel p_avg = parent -> avg;	
+		HSLAPixel s_avg = sroot -> avg; 
+
+		if(p_avg.dist(s_avg) <= tol){
+			return true;
+		}else{
+			return false;
+		}
+
+	}else{
+		//look at more children, until u reach leaf
+		return ((yesprune(sroot -> NE, sroot, tol)) && (yesprune(sroot -> NW, sroot, tol))
+		&& (yesprune(sroot -> SW, sroot, tol)) && (yesprune(sroot -> SE, sroot, tol)));
+	}
 }
 
 /* called by destructor and assignment operator*/
@@ -210,6 +263,32 @@ toqutree::Node * toqutree::copy(const Node * other) {
 /* your code here */
 }
 
+/*toqutree::Node * toqutree::copy_help(Node * & dest, const Node * other){
+	
+	if(other == NULL){
+		dest = NULL;
+	}
+	else{
+		Node * dest = new Node;
+		dest -> center = other -> center;
+		dest -> avg = other -> avg;
+		dest -> dimension = other -> dimension;
+		copy_help(dest -> NW, other -> NW);
+		copy_help(dest -> NE, other -> NE);
+		copy_help(dest -> SE, other -> SE);
+		copy_help(dest -> SW, other -> SW);
+	}
+
+		// if(other == NULL){
+	// 	return NULL;
+	// }
+	// else{
+	// 	Node *node = new Node (*other);
+	// 	node->NE = copy(other->NE);
+	// 	node->NW = copy(other->NW);
+	// 	node->SW = copy(other->SW);
+	// 	node->SE = copy(other->SE);
+}*/
 double toqutree::getaverageEntropy(PNG *im, int k, pair<int, int> ctr) {
 	stats s(*im);
 	int length = pow(2, k);
@@ -266,7 +345,6 @@ PNG toqutree::render(Node *node) {
 		}
 		return im;
 	}
-
 	SE_img = render(node->SE);
 	SW_img = render(node->SW);
 	NE_img = render(node->NE);

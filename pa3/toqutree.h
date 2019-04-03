@@ -207,6 +207,19 @@ private:
    /* combines 4 sections of image together
    */
    void overlay(PNG SE_img, PNG SW_img, PNG NE_img, PNG NW_img, PNG &im, pair<int, int> ctr, int k);
+
+      //helper function for render
+   void render_help();
+
+   //helper function for prune
+   void prune_helper(Node *& sroot, double tol);
+
+   //helper function for prune_helper
+   bool yesprune(Node *& sroot, Node *& parent, double tol);
+
+   //helper function for copy
+   Node * copy_help(Node * & dest, const Node * other);
+
    /* =================== end of private PA3 functions ============== */
 };
 
