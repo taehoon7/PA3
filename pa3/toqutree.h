@@ -192,6 +192,21 @@ private:
    /* helper function for size
 	*/
    int getsubtreeSize(Node * node);
+
+   /* helper function to get average entropy
+   */
+   double getaverageEntropy(PNG *im, int k, pair<int, int> ctr);
+
+   /* redraws given blank images to composite images of im 
+   */
+   void createPic(PNG *SE_img, PNG *SW_img, PNG *NE_img, PNG *NW_img, PNG *im, pair<int, int> ctr, int k);
+
+   /* helper function that recurively goes through tree starting from root to combine images together
+   */
+   PNG render(Node *node);
+   /* combines 4 sections of image together
+   */
+   void overlay(PNG SE_img, PNG SW_img, PNG NE_img, PNG NW_img, PNG &im, pair<int, int> ctr, int k);
    /* =================== end of private PA3 functions ============== */
 };
 

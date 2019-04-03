@@ -2,6 +2,8 @@
 #include "stats.h"
 
 stats::stats(PNG & im){
+	height = im.height() - 1;
+	width = im.width() - 1;
 	sumHueX.resize(im.height(), vector<double>(im.width(), 0));
 	sumHueY.resize(im.height(), vector<double>(im.width(), 0));
 	sumSat.resize(im.height(), vector<double>(im.width(), 0));
@@ -121,16 +123,85 @@ HSLAPixel stats::getAvg(pair<int,int> ul, pair<int,int> lr){
 
 vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
 	vector<int> histogram(36);
-	for (int k = 0; k < 36; k++) {
-		histogram[k] = hist[lr.second][lr.first][k];
-		if (ul.first != 0) {
-			histogram[k] -= hist[lr.second][ul.first - 1][k];
+	if (lr.first >= ul.first && lr.second >= ul.second) {
+		for (int k = 0; k < 36; k++) {
+			histogram[k] = hist[lr.second][lr.first][k];
+			if (ul.first != 0) {
+				histogram[k] -= hist[lr.second][ul.first - 1][k];
+			}
+			if (ul.second != 0) {
+				histogram[k] -= hist[ul.second - 1][lr.first][k];
+			}
+			if (ul.first != 0 && ul.second != 0) {
+				histogram[k] += hist[ul.second - 1][ul.first - 1][k];
+			}
 		}
-		if (ul.second != 0) {
-			histogram[k] -= hist[ul.second - 1][lr.first][k];
+	}
+	else if (lr.first >= ul.first && lr.second < ul.second) { //y value is lower (vertical case)
+		for (int k = 0; k < 36; k++) {
+			//top half
+			histogram[k] = hist[lr.second][lr.first][k];
+			if (ul.first != 0) {
+				histogram[k] -= hist[lr.second][ul.first - 1][k];
+			}
+			//bottom half
+			histogram[k] += hist[height][lr.first][k];
+			if (ul.first != 0) {
+				histogram[k] -= hist[height][ul.first - 1][k];
+			}
+			if (ul.second != 0) {
+				histogram[k] -= hist[ul.second - 1][lr.first][k];
+			}
+			if (ul.second != 0 && ul.first != 0) {
+				histogram[k] += hist[ul.second - 1][ul.first - 1][k];
+			}
 		}
-		if (ul.first != 0 && ul.second != 0) {
-			histogram[k] += hist[ul.second - 1][ul.first - 1][k];
+	}
+	else if (lr.first < ul.first && lr.second >= ul.second) { //x value is lower (horizontal case)
+		for (int k = 0; k < 36; k++) {
+			//left half
+			histogram[k] = hist[lr.second][lr.first][k];
+			if (ul.second != 0) {
+				histogram[k] -= hist[ul.second - 1][lr.first][k];
+			}
+			//right half
+			histogram[k] += hist[lr.second][width][k];
+			if (ul.first != 0) {
+				histogram[k] -= hist[lr.second][ul.first - 1][k];
+			}
+			if (ul.second != 0) {
+				histogram[k] -= hist[ul.second - 1][width][k];
+			}
+			if (ul.first != 0 && ul.second != 0) {
+				histogram[k] += hist[ul.second - 1][ul.first - 1][k];
+			}
+		}
+	}
+	else { //(vertical and horizontal)
+		for (int k = 0; k < 36; k++) {
+			//top left
+			histogram[k] = hist[lr.second][lr.first][k];
+			//top right
+			histogram[k] += hist[lr.second][width][k];
+			if (ul.first != 0) {
+				histogram[k] -= hist[lr.second][ul.first - 1][k];
+			}
+			//bottom left
+			histogram[k] += hist[height][lr.first][k];
+			if (ul.second != 0) {
+				histogram[k] -= hist[ul.second - 1][lr.first][k];
+			}
+			//bottom right
+			histogram[k] += hist[height][width][k];
+			if (ul.first != 0) {
+				histogram[k] -= hist[height][ul.first - 1][k];
+			}
+			if (ul.second != 0) {
+				histogram[k] -= hist[ul.second - 1][width][k];
+			}
+			if (ul.first != 0 && ul.second != 0) {
+				histogram[k] += hist[ul.second - 1][ul.first - 1][k];
+			}
 		}
 	}
 

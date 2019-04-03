@@ -27,6 +27,8 @@ public:
     *   the number of pixels whose hue value h, is: k*10 <= h < (k+1)*10. 
     */
     vector<vector<vector<int>>> hist;
+	int height;
+	int width;
 
 public:
 
