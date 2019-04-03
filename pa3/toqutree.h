@@ -147,6 +147,7 @@ public:
     /* returns the number of nodes in the current toqutree. primarily used
      * for debugging and testing.
      */
+
     int size();
 
    /* =============== end of public PA3 FUNCTIONS =========================*/
@@ -192,6 +193,19 @@ private:
    /* helper function for size
 	*/
    int getsubtreeSize(Node * node);
+
+   //helper function for render
+   void render_help();
+
+   //helper function for prune
+   void prune_helper(Node *& sroot, double tol);
+
+   //helper function for prune_helper
+   bool yesprune(Node *& sroot, Node *& parent, double tol);
+
+   //helper function for copy
+   Node * copy_help(Node * & dest, const Node * other);
+
    /* =================== end of private PA3 functions ============== */
 };
 
