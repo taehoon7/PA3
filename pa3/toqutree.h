@@ -147,7 +147,6 @@ public:
     /* returns the number of nodes in the current toqutree. primarily used
      * for debugging and testing.
      */
-
     int size();
 
    /* =============== end of public PA3 FUNCTIONS =========================*/
@@ -194,7 +193,22 @@ private:
 	*/
    int getsubtreeSize(Node * node);
 
-   //helper function for render
+   /* helper function to get average entropy
+   */
+   double getaverageEntropy(PNG *im, int k, pair<int, int> ctr);
+
+   /* redraws given blank images to composite images of im 
+   */
+   void createPic(PNG *SE_img, PNG *SW_img, PNG *NE_img, PNG *NW_img, PNG *im, pair<int, int> ctr, int k);
+
+   /* helper function that recurively goes through tree starting from root to combine images together
+   */
+   PNG render(Node *node);
+   /* combines 4 sections of image together
+   */
+   void overlay(PNG SE_img, PNG SW_img, PNG NE_img, PNG NW_img, PNG &im, pair<int, int> ctr, int k);
+
+      //helper function for render
    void render_help();
 
    //helper function for prune
