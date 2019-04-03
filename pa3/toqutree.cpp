@@ -45,6 +45,7 @@ toqutree::toqutree(PNG & imIn, int k){
 		}
 	}
 	root = buildTree(newimg, k);
+	delete (newimg);
 /* This constructor grabs the 2^k x 2^k sub-image centered */
 /* in imIn and uses it to build a quadtree. It may assume  */
 /* that imIn is large enough to contain an image of that size. */
@@ -127,6 +128,10 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 		node->SW = buildTree(SW_img, k - 1);
 		node->NE = buildTree(NE_img, k - 1);
 		node->NW = buildTree(NW_img, k - 1);
+		delete SE_img;
+		delete SW_img;
+		delete NE_img;
+		delete NW_img;
 	}
 	else {
 		stats s(*im);
@@ -169,13 +174,39 @@ void toqutree::prune(double tol){
 
 /* called by destructor and assignment operator*/
 void toqutree::clear(Node * & curr){
+	if (curr->NW != NULL) {
+		clear(curr->NW);
+	}
+	if (curr->NE != NULL) {
+		clear(curr->NE);
+	}
+	if (curr->SE != NULL) {
+		clear(curr->SE);
+	}
+	if (curr->SW != NULL) {
+		clear(curr->SW);
+	}
+	delete curr;
 /* your code here */
 }
 
 /* done */
 /* called by assignment operator and copy constructor */
 toqutree::Node * toqutree::copy(const Node * other) {
-
+	Node *newNode = new Node(other->center, other->dimension, other->avg);
+	if (other->NW != NULL) {
+		newNode->NW = copy(other->NW);
+	}
+	if (other->NE != NULL) {
+		newNode->NE = copy(other->NE);
+	}
+	if (other->SE != NULL) {
+		newNode->SE = copy(other->SE);
+	}
+	if (other->SW != NULL) {
+		newNode->SW = copy(other->SW);
+	}
+	return newNode;
 /* your code here */
 }
 
