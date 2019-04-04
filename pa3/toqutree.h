@@ -195,7 +195,7 @@ private:
 
    /* helper function to get average entropy
    */
-   double getaverageEntropy(stats s, int k, pair<int, int> ctr);
+   double getaverageEntropy(stats &s, int k, pair<int, int> ctr);
 
    /* redraws given blank images to composite images of im 
    */
@@ -203,7 +203,7 @@ private:
 
    /* helper function that recurively goes through tree starting from root to combine images together
    */
-   PNG render(Node *node);
+   PNG render(Node *& node);
    /* combines 4 sections of image together
    */
    void overlay(PNG SE_img, PNG SW_img, PNG NE_img, PNG NW_img, PNG &im, pair<int, int> ctr, int k);
@@ -212,11 +212,10 @@ private:
    void render_help();
 
    //helper function for prune
-   void prune_helper(Node *& sroot, double tol);
+   void prune_helper(Node *& node, double tol);
 
    //helper function for prune_helper
-   bool yesprune(Node *& sroot, Node *& parent, double tol);
-
+   bool yesprune(Node *& node, Node *& parent, double tol);
    /* =================== end of private PA3 functions ============== */
 };
 

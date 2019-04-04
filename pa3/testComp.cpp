@@ -62,20 +62,20 @@ TEST_CASE("stats::basic entropy","[weight=1][part=stats]"){
     long result = s.entropy(ul,lr);
 
     REQUIRE(result == 2);
-}*/
+}
 
 TEST_CASE("toqutree::basic ctor render","[weight=1][part=toqutree]"){
     PNG img;
     img.readFromFile("images/stanleySquare.png");
 
     toqutree t1(img,9);
-	printf("HIII\n");
     PNG out = t1.render();
+	out.writeToFile("images/stanleySquare-output.png");
     out.convert();
 
     REQUIRE(out==img);
 }
-/*
+
 TEST_CASE("toqutree::basic copy","[weight=1][part=toqutree]"){
     PNG img;
     img.readFromFile("images/geo.png");
@@ -87,19 +87,21 @@ TEST_CASE("toqutree::basic copy","[weight=1][part=toqutree]"){
 
     REQUIRE(out==img);
 }
-
+*/
 TEST_CASE("toqutree::basic prune","[weight=1][part=toqutree]"){
     PNG img;
-    img.readFromFile("images/ada.png");
+    img.readFromFile("images/ada.png");//ada
     
-    toqutree t1(img,9);
-
+    toqutree t1(img,9);//9
+	//printf("%d\n", t1.size());
     t1.prune(0.05);
+	//printf("HIIIIIII\n");
+	//printf("%d\n", t1.size());
     PNG result = t1.render();
-
+	result.writeToFile("images/ada-output.png");
     PNG expected; expected.readFromFile("images/adaPrune.05.png");
     result.convert();
 
     REQUIRE(expected==result);
-}*/
+}
 
