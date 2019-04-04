@@ -91,15 +91,15 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 		ul.second = (im->height() - length) / 2;
 		pair<int, int> lr(ul.first + length - 1, ul.second + length - 1);
 		pair<int, int> ctr(ul.first, ul.second);
-
+		stats s(*im);
 		//find split point
-		double min_Entropy = getaverageEntropy(im, k - 1, ctr);
+		double min_Entropy = getaverageEntropy(s, k - 1, ctr);
 		double entropy;
 		for (int row = ul.second; row <= lr.second; row++) {
 			for (int col = ul.first; col <= lr.first; col++) {
 				pair<int, int> temp(col, row);
 				//printf("%d\n", col);
-				entropy = getaverageEntropy(im, k - 1, temp);
+				entropy = getaverageEntropy(s, k - 1, temp);
 				if (entropy < min_Entropy) {
 					ctr.first = col;
 					ctr.second = row;
@@ -107,9 +107,8 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 				}
 			}
 		}
-
+		//printf("HIIII\n");
 		//create new node
-		stats s(*im);
 		ul.first = 0;
 		ul.second = 0;
 		lr.first = (int)im->width() - 1;
@@ -118,37 +117,26 @@ toqutree::Node * toqutree::buildTree(PNG * im, int k) {
 
 		//until leaf pixel is reached, do recursion
 		//create 4 images from original image
-		/*PNG *SE_img = new PNG(length, length);
+		PNG *SE_img = new PNG(length, length);
 		PNG *SW_img = new PNG(length, length);
 		PNG *NE_img = new PNG(length, length);
 		PNG *NW_img = new PNG(length, length);
-		createPic(SE_img, SW_img, NE_img, NW_img, im, ctr, k - 1);
 		//recursion
 		node->SE = buildTree(SE_img, k - 1);
 		node->SW = buildTree(SW_img, k - 1);
 		node->NE = buildTree(NE_img, k - 1);
 		node->NW = buildTree(NW_img, k - 1);
+		createPic(SE_img, SW_img, NE_img, NW_img, im, ctr, k - 1);
 		delete SE_img;
 		delete SW_img;
 		delete NE_img;
-		delete NW_img;*/
-		PNG SE_img = PNG(length, length);
-		PNG SW_img = PNG(length, length);
-		PNG NE_img = PNG(length, length);
-		PNG NW_img = PNG(length, length);
-		createPic(&SE_img, &SW_img, &NE_img, &NW_img, im, ctr, k - 1);
-		//recursion
-		node->SE = buildTree(&SE_img, k - 1);
-		node->SW = buildTree(&SW_img, k - 1);
-		node->NE = buildTree(&NE_img, k - 1);
-		node->NW = buildTree(&NW_img, k - 1);
+		delete NW_img;
+
+		return node;
 	}
 	else {
-		stats s(*im);
-		pair<int, int> one_pix(0, 0);
-		node = new Node(one_pix, k, s.getAvg(one_pix, one_pix));
+		return new Node(make_pair(0,0), k, *im->getPixel(0,0));
 	}
-	return node;
 	/* This constructor grabs the 2^k x 2^k sub-image centered */
 	/* in imIn and uses it to build a quadtree. It may assume  */
 	/* that imIn is large enough to contain an image of that size. */
@@ -173,17 +161,15 @@ PNG toqutree::render(){
 /* your code here */
 
 }
-void toqutree::render_help(){
 
-}
 /* oops, i left the implementation of this one in the file! */
 void toqutree::prune(double tol){
-	if(root != NULL){
+	/*if(root != NULL){
 		prune_helper(root, tol);
-	}
+	}*/
 }
 
-void toqutree::prune_helper(Node *& sroot, double tol){
+/*void toqutree::prune_helper(Node *& sroot, double tol){
 	if(sroot != NULL){
 		if((yesprune(sroot -> NE, sroot, tol)) && (yesprune(sroot -> NW, sroot, tol))
 		&& (yesprune(sroot -> SW, sroot, tol)) && (yesprune(sroot -> SE, sroot, tol))){
@@ -199,9 +185,9 @@ void toqutree::prune_helper(Node *& sroot, double tol){
 		prune_helper(sroot -> SW, tol);
 		prune_helper(sroot -> SE, tol);
 	}
-}
+}*/
 
-bool toqutree::yesprune(Node *& sroot, Node *& parent, double tol){
+/*bool toqutree::yesprune(Node *& sroot, Node *& parent, double tol){
 	//if leaves are already pruned, then stop
 	if(sroot == NULL){
 		return false;
@@ -223,7 +209,7 @@ bool toqutree::yesprune(Node *& sroot, Node *& parent, double tol){
 		return ((yesprune(sroot -> NE, sroot, tol)) && (yesprune(sroot -> NW, sroot, tol))
 		&& (yesprune(sroot -> SW, sroot, tol)) && (yesprune(sroot -> SE, sroot, tol)));
 	}
-}
+}*/
 
 /* called by destructor and assignment operator*/
 void toqutree::clear(Node * & curr){
@@ -263,55 +249,27 @@ toqutree::Node * toqutree::copy(const Node * other) {
 /* your code here */
 }
 
-/*toqutree::Node * toqutree::copy_help(Node * & dest, const Node * other){
-	
-	if(other == NULL){
-		dest = NULL;
-	}
-	else{
-		Node * dest = new Node;
-		dest -> center = other -> center;
-		dest -> avg = other -> avg;
-		dest -> dimension = other -> dimension;
-		copy_help(dest -> NW, other -> NW);
-		copy_help(dest -> NE, other -> NE);
-		copy_help(dest -> SE, other -> SE);
-		copy_help(dest -> SW, other -> SW);
-	}
-
-		// if(other == NULL){
-	// 	return NULL;
-	// }
-	// else{
-	// 	Node *node = new Node (*other);
-	// 	node->NE = copy(other->NE);
-	// 	node->NW = copy(other->NW);
-	// 	node->SW = copy(other->SW);
-	// 	node->SE = copy(other->SE);
-}*/
-double toqutree::getaverageEntropy(PNG *im, int k, pair<int, int> ctr) {
-	stats s(*im);
+double toqutree::getaverageEntropy(stats s, int k, pair<int, int> ctr) {
 	int length = pow(2, k);
 	pair<int, int> ul_SE(ctr.first, ctr.second);
-	pair<int, int> lr_SE((ctr.first + length - 1) % im->width(), (ctr.second + length - 1) % im->height());
+	pair<int, int> lr_SE((ctr.first + length - 1) % s.width, (ctr.second + length - 1) % s.height);
 	int area = length*length;
-	pair<int, int> ul_SW((ctr.first + length) % im->width(), ctr.second);
-	pair<int, int> lr_SW((ul_SW.first + length - 1) % im->width(), (ul_SW.second + length - 1) % im->height());
+	pair<int, int> ul_SW((ctr.first + length) % s.width, ctr.second);
+	pair<int, int> lr_SW((ul_SW.first + length - 1) % s.width, (ul_SW.second + length - 1) % s.height);
 
-	pair<int, int> ul_NE (ctr.first, (ctr.second + length) % im->height());
-	pair<int, int> lr_NE ((ul_NE.first + length - 1) % im->width(), (ul_NE.second + length - 1) % im->height());
+	pair<int, int> ul_NE (ctr.first, (ctr.second + length) % s.height);
+	pair<int, int> lr_NE ((ul_NE.first + length - 1) % s.width, (ul_NE.second + length - 1) % s.height);
 
-	pair<int, int> ul_NW((ctr.first + length) % im->width(), (ctr.second + length) % im->height());
-	pair<int, int> lr_NW((ul_NW.first + length - 1) % im->width(), (ul_NW.second + length - 1) % im->height());
+	pair<int, int> ul_NW((ctr.first + length) % s.width, (ctr.second + length) % s.height);
+	pair<int, int> lr_NW((ul_NW.first + length - 1) % s.width, (ul_NW.second + length - 1) % s.height);
 	//printf("%d\n", lr_NW.second);
 	vector<int> hist_SE = s.buildHist(ul_SE, lr_SE);
 	vector<int> hist_SW = s.buildHist(ul_SW, lr_SW);
 	vector<int> hist_NE = s.buildHist(ul_NE, lr_NE);
 	vector<int> hist_NW = s.buildHist(ul_NW, lr_NW);
-	//printf("HIIIII\n");
 
-	return (s.entropy(hist_SE, area) + s.entropy(hist_SW, area)
-		+ s.entropy(hist_NE, area) + s.entropy(hist_NW, area)) / 4.0;
+	return s.entropy(hist_SE, area) + s.entropy(hist_SW, area)
+		+ s.entropy(hist_NE, area) + s.entropy(hist_NW, area);
 }
 
 void toqutree::createPic(PNG *SE_img, PNG *SW_img, PNG *NE_img, PNG *NW_img, PNG *im, pair<int,int> ctr, int k) {

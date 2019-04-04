@@ -20,7 +20,7 @@ int main()
 	origIm1.readFromFile("images/canadaPlace.png");
 
 	// use it to build a toqutree
-	toqutree t1(origIm1,3); //3
+	toqutree t1(origIm1,7); //3
 	
     // make some copies for pruning tests
 	//toqutree tCopy1(t1);
@@ -37,14 +37,14 @@ int main()
 	//tCopy4.prune(.025); 
 
 	// render the toqutree
-    PNG ppic1 = t1.render();
+    //PNG ppic1 = t1.render();
     //PNG ppiccopy1 = tCopy1.render();
     //PNG ppiccopy2 = tCopy2.render();
     //PNG ppiccopy3 = tCopy3.render();
     //PNG ppiccopy4 = tCopy4.render();
 
     // write the pngs to files.
-	ppic1.writeToFile("images/output-CP.png");
+	//ppic1.writeToFile("images/output-CP.png");
 	//ppiccopy1.writeToFile("images/output-CP.2.png");
 	//ppiccopy2.writeToFile("images/output-CP.1.png");
 	//ppiccopy3.writeToFile("images/output-CP.05.png");

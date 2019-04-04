@@ -69,7 +69,7 @@ TEST_CASE("toqutree::basic ctor render","[weight=1][part=toqutree]"){
     img.readFromFile("images/stanleySquare.png");
 
     toqutree t1(img,9);
-
+	printf("HIII\n");
     PNG out = t1.render();
     out.convert();
 

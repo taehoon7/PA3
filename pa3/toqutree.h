@@ -195,7 +195,7 @@ private:
 
    /* helper function to get average entropy
    */
-   double getaverageEntropy(PNG *im, int k, pair<int, int> ctr);
+   double getaverageEntropy(stats s, int k, pair<int, int> ctr);
 
    /* redraws given blank images to composite images of im 
    */
@@ -216,9 +216,6 @@ private:
 
    //helper function for prune_helper
    bool yesprune(Node *& sroot, Node *& parent, double tol);
-
-   //helper function for copy
-   Node * copy_help(Node * & dest, const Node * other);
 
    /* =================== end of private PA3 functions ============== */
 };

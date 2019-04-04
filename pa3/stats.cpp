@@ -34,6 +34,7 @@ stats::stats(PNG & im){
 					hist[row][col][k] = hist[row - 1][col][k] + hist[row][col - 1][k] - hist[row - 1][col - 1][k];
 					if (im.getPixel(col,row)->h >= k * 10 && im.getPixel(col,row)->h < (k + 1) * 10) {
 						hist[row][col][k]++;
+						break;
 					}
 				}
 			}
@@ -47,6 +48,7 @@ stats::stats(PNG & im){
 					hist[row][col][k] = hist[row - 1][col][k];
 					if (im.getPixel(col,row)->h >= k * 10 && im.getPixel(col,row)->h < (k + 1) * 10) {
 						hist[row][col][k]++;
+						break;
 					}
 				}
 			}
@@ -60,6 +62,7 @@ stats::stats(PNG & im){
 					hist[row][col][k] = hist[row][col - 1][k];
 					if (im.getPixel(col,row)->h >= k * 10 && im.getPixel(col,row)->h < (k + 1) * 10) {
 						hist[row][col][k]++;
+						break;
 					}
 				}
 			}
@@ -204,7 +207,7 @@ vector<int> stats::buildHist(pair<int,int> ul, pair<int,int> lr){
 			}
 		}
 	}
-
+	//printf("HIIIIIIIII\n");
 	return histogram;
 /* your code here */
 }
